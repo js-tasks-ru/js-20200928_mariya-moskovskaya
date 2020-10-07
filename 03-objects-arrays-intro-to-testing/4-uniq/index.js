@@ -4,15 +4,7 @@
  * @returns {*[]} - the new array with uniq values
  */
 export function uniq(arr) {
-  let result = [];
+  const result = new Set(arr);
 
-  if (arr) {
-    arr.forEach(item => {
-      if (!result.includes(item)) {
-        result.push(item);
-      }
-    });
-  }
-
-  return result;
+  return Array.from(result);
 }

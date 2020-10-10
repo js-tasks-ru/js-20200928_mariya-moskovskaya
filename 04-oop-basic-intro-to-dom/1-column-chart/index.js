@@ -29,7 +29,7 @@ export default class ColumnChart {
 
   render() {
     const columnChart = document.createElement('div');
-    columnChart.className = this.data.length ? "column-chart" : "column-chart column-chart_loading";
+    columnChart.className = getColumnChartClass.call(this);
     columnChart.style = `--chart-height: ${this.chartHeight}`;
     const maxValue = Math.max.apply(null, this.data);
 
@@ -53,6 +53,13 @@ export default class ColumnChart {
         return `<a class="column-chart__link" href=${this.link}>View all</a>`;
       }
       return '';
+    }
+
+    function getColumnChartClass() {
+      if (this.data.length) {
+        return "column-chart";
+      }
+      return "column-chart column-chart_loading";
     }
 
     function createData() {

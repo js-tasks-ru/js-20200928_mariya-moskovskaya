@@ -55,13 +55,6 @@ export default class ColumnChart {
       return '';
     }
 
-    function getColumnChartClass() {
-      if (this.data.length) {
-        return "column-chart";
-      }
-      return "column-chart column-chart_loading";
-    }
-
     function createData() {
       return this.data.reduce((result, item) => result += createColumn.call(this, item), '');
     }

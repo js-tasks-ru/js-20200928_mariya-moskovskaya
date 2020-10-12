@@ -1,5 +1,7 @@
 export default class ColumnChart {
   chartHeight = 50;
+  maxValue = 0;
+  subElements = {};
 
   constructor({data = [], label = '', value = 0, link} = {}) {
     this.data = data;
@@ -10,14 +12,13 @@ export default class ColumnChart {
     this.render();
   }
 
-  update(arr) {
-    this.data = arr;
-    this.render();
+  update(data) {
+    this.subElements.body.innerHTML = this.createData(data);
   }
 
   destroy() {
     this.remove();
-    this.element = null;
+    this.element = null
     this.subElements = {};
   }
 
@@ -26,14 +27,12 @@ export default class ColumnChart {
   }
 
   getColumnChartClass() {
-    if (this.data.length) {
-      return "column-chart";
-    }
-    return "column-chart column-chart_loading";
+    return this.data.length ? "column-chart" : "column-chart column-chart_loading";
   }
 
-  createData() {
-    return this.data.reduce((result, item) => result += this.createColumn(item), '');
+  createData(data) {
+    this.maxValue = Math.max.apply(null, data);
+    return data.map(item => this.createColumn(item)).join('');
   }
 
   createColumn(value) {
@@ -47,8 +46,6 @@ export default class ColumnChart {
     columnChart.className = this.getColumnChartClass();
     columnChart.style = `--chart-height: ${this.chartHeight}`;
 
-    this.maxValue = Math.max.apply(null, this.data);
-
     columnChart.innerHTML = `<div class="column-chart__title">
                                ${'Total ' + this.label}
                                ${this.link ? `<a class="column-chart__link" href=${this.link}>View all</a>` : ''}
@@ -58,11 +55,21 @@ export default class ColumnChart {
                                  ${this.value}
                                </div>
                                <div data-element="body" class="column-chart__chart">
-                                 ${this.createData()}
+                                 ${this.createData(this.data)}
                                </div>
                              </div>`;
 
     this.element = columnChart;
-    this.subElements = this.element.childNodes;
+    this.subElements = this.getSubElements(this.element);
+  }
+
+  getSubElements(element) {
+    const elements = element.querySelectorAll('[data-element]');
+
+    return [...elements].reduce((accum, subElement) => {
+      accum[subElement.dataset.element] = subElement;
+
+      return accum;
+    }, {});
   }
 }
